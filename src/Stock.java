@@ -15,20 +15,20 @@ class Stock {
 
     synchronized int withdraw(int goodsToWithdraw) {
         if (isEmpty()) {
-            return 0;
+            return 0; // Если склад пустой
         }
 
-        if (getBalance() > goodsToWithdraw) {
-            balance -= goodsToWithdraw;
+        if (getBalance() > goodsToWithdraw) { // Если на складе больше товара, чем требует покупатель
+            setBalance(getBalance() - goodsToWithdraw);
             System.out.println("Со склада успешно выдано " + goodsToWithdraw + " единиц товара.");
             System.out.println("Остаток товара на складе: " + getBalance());
             return goodsToWithdraw;
-        } else { // Выдать остатки
-            int remainder = balance;
-            setBalance(0);
+        } else { // Товара недостаточно для запроса, выдаем остатки
+            int remainder = getBalance(); // Остаток
+            setBalance(0); // Устанавливаем баланс в ноль
             System.out.println("Выдано " + remainder + " единиц товара");
             System.out.println("Товар закончился!");
-            return remainder;
+            return remainder; // Выдаем остаток
         }
     }
 }

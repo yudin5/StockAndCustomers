@@ -5,7 +5,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 public class SalesActivity {
-    private static int numberOfCustomers;
+    private static int numberOfCustomers; // Передается в качестве параметра
     static int getNumberOfCustomers() {return numberOfCustomers;}
 
     public static void main(String[] args) {
@@ -24,7 +24,13 @@ public class SalesActivity {
             }
             exec.shutdown();
 
-            // Выводим всех покупателей
+            try {
+                // Ждем выполнения всех потоков
+                exec.awaitTermination(2, TimeUnit.SECONDS);
+                // while (exec.awaitTermination(1, TimeUnit.SECONDS)) { }
+            } catch (InterruptedException ex) { System.out.println("Ошбика прерывания"); }
+
+            // Выводим итоговую таблицу на экран
             showResult();
 
         } catch (NumberFormatException ex) {
@@ -35,16 +41,16 @@ public class SalesActivity {
     }
 
     private static void showResult() {
-        try {
-            TimeUnit.MILLISECONDS.sleep(500);
+        /*try {
+            TimeUnit.MILLISECONDS.sleep(5);
         } catch (InterruptedException ex) {
             System.out.println("Ошибка прерывания при показе результатов");
-        }
+        }*/
 
         // Выводим всех покупателей
-        ArrayList<String> list = Customer.getListOfCustomers();
-        Collections.sort(list);
-        System.out.println("================================");
+        ArrayList<String> list = Customer.getListOfCustomers(); // Берем список покупателей
+        Collections.sort(list); // Сортируем список
+        System.out.println("==========================================");
         System.out.println("ID      \t\t" + "ПОКУПОК\t\t" + " ТОВАРА\t\t");
         for (String line : list) {
             System.out.println(line);

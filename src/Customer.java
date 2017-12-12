@@ -6,7 +6,7 @@ import java.util.concurrent.CyclicBarrier;
 public class Customer implements Runnable {
 
     private static volatile ArrayList<String> listOfCustomers = new ArrayList<>();
-    private static CyclicBarrier barrier = new CyclicBarrier(SalesActivity.getNumberOfCustomers());
+    private static CyclicBarrier barrier = new CyclicBarrier(SalesActivity.getNumberOfCustomers()); // Количество покупателей
     private static int customersCount = 1; // Счетчик покупателей
     private int id; // Обозначение покупателя
     private int productPurchased; // Количество купленного товара
