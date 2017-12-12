@@ -1,8 +1,11 @@
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 public class SalesActivity {
-    static int numberOfCustomers;
+    private static int numberOfCustomers;
     static int getNumberOfCustomers() {return numberOfCustomers;}
 
     public static void main(String[] args) {
@@ -21,10 +24,30 @@ public class SalesActivity {
             }
             exec.shutdown();
 
+            // Выводим всех покупателей
+            showResult();
+
         } catch (NumberFormatException ex) {
             System.out.println("Количество покупателей должно быть целым положительным числом.");
         } catch (IllegalArgumentException ex) {
             System.out.println("Введите корректные аргументы. Одно положительно число.");
+        }
+    }
+
+    private static void showResult() {
+        try {
+            TimeUnit.MILLISECONDS.sleep(500);
+        } catch (InterruptedException ex) {
+            System.out.println("Ошибка прерывания при показе результатов");
+        }
+
+        // Выводим всех покупателей
+        ArrayList<String> list = Customer.getListOfCustomers();
+        Collections.sort(list);
+        System.out.println("================================");
+        System.out.println("ID      \t\t" + "ПОКУПОК\t\t" + " ТОВАРА\t\t");
+        for (String line : list) {
+            System.out.println(line);
         }
     }
 }
