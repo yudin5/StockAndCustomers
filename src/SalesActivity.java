@@ -27,8 +27,7 @@ public class SalesActivity {
             try {
                 // Ждем выполнения всех потоков
                 exec.awaitTermination(2, TimeUnit.SECONDS);
-                // while (exec.awaitTermination(1, TimeUnit.SECONDS)) { }
-            } catch (InterruptedException ex) { System.out.println("Ошбика прерывания"); }
+            } catch (InterruptedException ex) { System.out.println("Ошибка прерывания"); }
 
             // Выводим итоговую таблицу на экран
             showResult();
@@ -36,21 +35,16 @@ public class SalesActivity {
         } catch (NumberFormatException ex) {
             System.out.println("Количество покупателей должно быть целым положительным числом.");
         } catch (IllegalArgumentException ex) {
-            System.out.println("Введите корректные аргументы. Одно положительно число.");
+            System.out.println("Введите корректные аргументы. Одно положительное целое число.");
         }
     }
 
     private static void showResult() {
-        /*try {
-            TimeUnit.MILLISECONDS.sleep(5);
-        } catch (InterruptedException ex) {
-            System.out.println("Ошибка прерывания при показе результатов");
-        }*/
 
         // Выводим всех покупателей
         ArrayList<String> list = Customer.getListOfCustomers(); // Берем список покупателей
         Collections.sort(list); // Сортируем список
-        System.out.println("==========================================");
+        System.out.println("=========================================");
         System.out.println("ID      \t\t" + "ПОКУПОК\t\t" + " ТОВАРА\t\t");
         for (String line : list) {
             System.out.println(line);

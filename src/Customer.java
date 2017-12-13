@@ -60,18 +60,14 @@ public class Customer implements Runnable {
         while (!stock.isEmpty()) {
             buy(rand.nextInt(10) + 1); // от 1 до 10 включительно
             try {
-                //barrier.await(500, TimeUnit.MILLISECONDS);
                 barrier.await();
             } catch (BrokenBarrierException | InterruptedException ex) {
-                //System.out.println(this);
                 break;
-                //return;
             }
         }
         barrier.reset();
-        //System.out.println(this);
         synchronized (listOfCustomers) {
-            listOfCustomers.add(this.toString());
+            listOfCustomers.add(this.toString()); // Записываем в список с результатом
         }
     }
 }
