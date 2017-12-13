@@ -6,7 +6,7 @@ import java.util.concurrent.TimeUnit;
 
 public class SalesActivity {
     private static int numberOfCustomers; // Передается в качестве параметра
-    static int getNumberOfCustomers() {return numberOfCustomers;}
+    static synchronized int getNumberOfCustomers() {return numberOfCustomers;}
 
     public static void main(String[] args) {
         try {
@@ -16,18 +16,19 @@ public class SalesActivity {
             if (numberOfCustomers <= 0) throw new NumberFormatException();
 
             // Начинаем работу
-            Stock stock = new Stock(); // Создаем склад
+            //Stock stock = Stock.getInstance(); // Создаем склад
             ExecutorService exec = Executors.newCachedThreadPool(); // Создаем пул для покупателей
 
             for (int i = 0; i < numberOfCustomers; i++) {
-                exec.execute(new Customer(stock)); // Покупатели начинают покупать со склада
+                exec.execute(new Customer()); // Покупатели начинают покупать со склада
             }
             exec.shutdown();
 
-            try {
+            //try {
                 // Ждем выполнения всех потоков
-                exec.awaitTermination(2, TimeUnit.SECONDS);
-            } catch (InterruptedException ex) { System.out.println("Ошибка прерывания"); }
+                while (!exec.isTerminated()) {}
+                //exec.awaitTermination(2, TimeUnit.SECONDS);
+            //} catch (InterruptedException ex) { System.out.println("Ошибка прерывания"); }
 
             // Выводим итоговую таблицу на экран
             showResult();
@@ -42,12 +43,12 @@ public class SalesActivity {
     private static void showResult() {
 
         // Выводим всех покупателей
-        ArrayList<String> list = Customer.getListOfCustomers(); // Берем список покупателей
+        ArrayList<Customer> list = Stock.getInstance().getListOfCustomers(); // Берем список покупателей
         Collections.sort(list); // Сортируем список
         System.out.println("=========================================");
         System.out.println("ID      \t\t" + "ПОКУПОК\t\t" + " ТОВАРА\t\t");
-        for (String line : list) {
-            System.out.println(line);
+        for (Customer customer : list) {
+            System.out.println(customer);
         }
     }
 }

@@ -1,23 +1,21 @@
-import java.util.ArrayList;
 import java.util.Random;
 import java.util.concurrent.BrokenBarrierException;
-import java.util.concurrent.CyclicBarrier;
 
-public class Customer implements Runnable {
+public class Customer implements Runnable, Comparable<Customer> {
 
-    private static volatile ArrayList<String> listOfCustomers = new ArrayList<>();
-    private static CyclicBarrier barrier = new CyclicBarrier(SalesActivity.getNumberOfCustomers()); // Количество покупателей
+    //private static volatile ArrayList<String> listOfCustomers = new ArrayList<>();
+    //private static CyclicBarrier barrier = new CyclicBarrier(SalesActivity.getNumberOfCustomers()); // Количество покупателей
     private static int customersCount = 1; // Счетчик покупателей
     private int id; // Обозначение покупателя
     private int productPurchased; // Количество купленного товара
     private int purchasesQuantity; // Количество сделанных покупок
-    private Stock stock; // Магазин для покупок
+    //private Stock stock; // Магазин для покупок
 
-    static ArrayList<String> getListOfCustomers() {return listOfCustomers;}
+    //static ArrayList<String> getListOfCustomers() {return listOfCustomers;}
 
-    Customer(Stock stock) {
+    Customer() {
         id = customersCount++;
-        this.stock = stock;
+        //this.stock = Stock.getInstance();
         productPurchased = 0;
         purchasesQuantity = 0;
     }
@@ -32,22 +30,20 @@ public class Customer implements Runnable {
 
     private void buy(int goodsToBuy) { // Передаем, сколько покупатель хочет купить
         System.out.println("Покупатель #" + id + " хочет купить " + goodsToBuy + " единиц товара.");
-        //synchronized (stock) {
-            int realPurchased = stock.withdraw(goodsToBuy); // Сколько действительно куплено
-            if (realPurchased > 0) {
-                if (realPurchased == goodsToBuy) {
-                    purchasesQuantity++;
-                    System.out.println("Покупатель #" + id + " купил " + realPurchased + " единиц товара.\r\n");
-                    productPurchased += realPurchased;
-                } else {
-                    purchasesQuantity++;
-                    System.out.println("Покупателю #" + id + " удалось купить лишь " + realPurchased + " единиц товара.\r\n");
-                    productPurchased += realPurchased;
-                }
+        int realPurchased = Stock.getInstance().withdraw(goodsToBuy); // Сколько действительно куплено
+        if (realPurchased > 0) {
+            if (realPurchased == goodsToBuy) {
+                purchasesQuantity++;
+                System.out.println("Покупатель #" + id + " купил " + realPurchased + " единиц товара.\r\n");
+                productPurchased += realPurchased;
             } else {
-                barrier.reset();
+                purchasesQuantity++;
+                System.out.println("Покупателю #" + id + " удалось купить лишь " + realPurchased + " единиц товара.\r\n");
+                productPurchased += realPurchased;
             }
-        //}
+        } else {
+            Stock.getBarrier().reset();
+        }
     }
 
     public String toString() {
@@ -57,17 +53,22 @@ public class Customer implements Runnable {
     @Override
     public void run() {
         Random rand = new Random();
-        while (!stock.isEmpty()) {
+        while (!Stock.getInstance().isEmpty()) {
             buy(rand.nextInt(10) + 1); // от 1 до 10 включительно
             try {
-                barrier.await();
+                Stock.getBarrier().await();
             } catch (BrokenBarrierException | InterruptedException ex) {
                 break;
             }
         }
-        barrier.reset();
-        synchronized (listOfCustomers) {
-            listOfCustomers.add(this.toString()); // Записываем в список с результатом
+        synchronized (Stock.getInstance().getListOfCustomers()) {
+            Stock.getInstance().getListOfCustomers().add(this);
         }
+        Stock.getBarrier().reset();
+    }
+
+    @Override
+    public int compareTo(Customer o) {
+        return id - o.id;
     }
 }

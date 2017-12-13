@@ -1,5 +1,34 @@
+import java.util.ArrayList;
+import java.util.concurrent.CyclicBarrier;
+
 class Stock {
     private volatile int balance = 1000;
+    private volatile ArrayList<Customer> listOfCustomers;
+    private static Stock instance;
+    private static CyclicBarrier barrier; //= new CyclicBarrier(SalesActivity.getNumberOfCustomers()); // Количество покупателей
+
+    private Stock() {}
+
+    public static synchronized Stock getInstance() {
+        if (instance == null) {
+            instance = new Stock();
+        }
+        return instance;
+    }
+
+    public static synchronized CyclicBarrier getBarrier() {
+        if (barrier == null) {
+            barrier = new CyclicBarrier(SalesActivity.getNumberOfCustomers()); // Количество покупателей
+        }
+        return barrier;
+    }
+
+    public synchronized ArrayList<Customer> getListOfCustomers() {
+        if (listOfCustomers == null) {
+            listOfCustomers = new ArrayList<>();
+        }
+        return listOfCustomers;
+    }
 
     private synchronized int getBalance() {
         return balance;
