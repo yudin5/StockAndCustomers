@@ -24,11 +24,9 @@ public class SalesActivity {
             }
             exec.shutdown();
 
-            //try {
                 // Ждем выполнения всех потоков
                 while (!exec.isTerminated()) {}
                 //exec.awaitTermination(2, TimeUnit.SECONDS);
-            //} catch (InterruptedException ex) { System.out.println("Ошибка прерывания"); }
 
             // Выводим итоговую таблицу на экран
             showResult();
