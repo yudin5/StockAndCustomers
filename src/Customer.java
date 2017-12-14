@@ -5,7 +5,7 @@ public class Customer implements Runnable, Comparable<Customer> {
 
     //private static volatile ArrayList<String> listOfCustomers = new ArrayList<>();
     //private static CyclicBarrier barrier = new CyclicBarrier(SalesActivity.getNumberOfCustomers()); // Количество покупателей
-    private static int customersCount = 1; // Счетчик покупателей
+    private static int customersCount = 1; // Счетчик покупателей, нужен только для создания уникального имени
     private int id; // Обозначение покупателя
     private int productPurchased; // Количество купленного товара
     private int purchasesQuantity; // Количество сделанных покупок
